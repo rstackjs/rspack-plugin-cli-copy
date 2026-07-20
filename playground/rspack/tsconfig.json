@@ -3,21 +3,10 @@
     "target": "ES2020",
     "lib": ["DOM", "ES2020"],
     "module": "ESNext",
-    "jsx": "preserve",
-    "jsxImportSource": "vue",
-    "strict": true,
     "noEmit": true,
+    "strict": true,
     "skipLibCheck": true,
-    "isolatedModules": true,
-    "resolveJsonModule": true,
-    "moduleResolution": "bundler",
-    "useDefineForClassFields": true,
-    "allowImportingTsExtensions": true
+    "moduleResolution": "bundler"
   },
-  "include": ["src"],
-  "ts-node": {
-    "compilerOptions": {
-      "module": "CommonJS"
-    }
-  }
+  "include": ["src"]
 }

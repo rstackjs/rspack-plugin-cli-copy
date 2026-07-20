@@ -3,7 +3,8 @@
     "target": "ES2015",
     "lib": ["DOM", "ESNext"],
     "allowJs": true,
-    "module": "commonjs",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -11,8 +12,6 @@
     "jsx": "preserve",
     "experimentalDecorators": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node",
-    "baseUrl": "./",
     "outDir": "./dist",
     "declaration": true
   },

@@ -1,21 +1,17 @@
 {
-  "name": "rspack-vue-ts-starter",
-  "version": "1.0.0",
+  "name": "rspack-playground",
+  "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development rspack serve",
     "build": "cross-env NODE_ENV=production rspack build"
   },
-  "dependencies": {
-    "vue": "^3.5.13"
-  },
   "devDependencies": {
-    "@rspack/cli": "^1.2.7",
-    "@rspack/core": "^1.2.7",
-    "cross-env": "^7.0.3",
-    "rspack-plugin-cli-copy": "workspace:*",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.8.2",
-    "vue-loader": "^17.4.2"
+    "@rspack/cli": "^2.1.4",
+    "@rspack/core": "^2.1.4",
+    "@rspack/dev-server": "^2.1.0",
+    "cross-env": "^10.1.0",
+    "rspack-plugin-cli-copy": "workspace:*"
   }
 }

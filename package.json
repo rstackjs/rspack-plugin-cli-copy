@@ -1,7 +1,7 @@
 {
   "name": "rspack-plugin-cli-copy",
   "version": "0.0.8",
-  "packageManager": "pnpm@10.6.2",
+  "packageManager": "pnpm@11.15.1",
   "description": "Start the project and automatically copy the cli network url",
   "author": "wChenonly",
   "type": "module",
@@ -19,38 +19,43 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
+      "types": {
+        "import": "./dist/index.d.mts",
+        "require": "./dist/index.d.cts"
+      },
+      "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     }
   },
   "main": "./dist/index.cjs",
-  "types": "./dist/index.d.ts",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
   "scripts": {
     "play:rsbuild": "nr build && nr -C playground/rsbuild dev",
     "play:rspack": "nr build && nr -C playground/rspack dev",
-    "build": "tsup",
+    "build": "tsdown",
+    "test": "rstest",
     "release": "bumpp  --commit 'release: rspack-plugin-cli-copy v'"
   },
   "dependencies": {
-    "@napi-rs/clipboard": "^1.1.2"
+    "@napi-rs/clipboard": "^1.1.4"
   },
   "devDependencies": {
-    "@antfu/ni": "^24.1.0",
-    "@rsbuild/core": "^1.0.0-alpha.5",
-    "@rspack/core": "^1.2.7",
-    "@types/node": "^22.13.10",
-    "bumpp": "^10.0.3",
-    "nano-staged": "^0.8.0",
-    "pnpm": "^10.6.2",
-    "prettier": "^3.5.3",
-    "simple-git-hooks": "^2.11.1",
-    "tsup": "^8.4.0",
-    "typescript": "^5.8.2",
-    "vitest": "^3.0.8"
+    "@antfu/ni": "^30.2.0",
+    "@rsbuild/core": "^2.1.6",
+    "@rspack/core": "^2.1.4",
+    "@rstest/core": "^0.11.2",
+    "@types/node": "^26.1.1",
+    "bumpp": "^11.1.0",
+    "nano-staged": "^1.0.2",
+    "pnpm": "^11.15.1",
+    "prettier": "^3.9.5",
+    "simple-git-hooks": "^2.13.1",
+    "tsdown": "^0.22.9",
+    "typescript": "^7.0.2"
   },
   "nano-staged": {
     "*.{ts,tsx,js,jsx,md}": "prettier --write"

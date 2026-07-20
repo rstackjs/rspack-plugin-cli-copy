@@ -1,40 +1,65 @@
 import { type NetworkInterfaceInfo, networkInterfaces } from 'node:os'
 import type { RspackPluginInstance, Compiler } from '@rspack/core'
 import type { RsbuildPlugin } from '@rsbuild/core'
-import { Clipboard } from '@napi-rs/clipboard'
 
 export class rspackCliCopyPlugin implements RspackPluginInstance {
   apply(compiler: Compiler) {
-    compiler.hooks.afterCompile.tap('NetworkCopyPlugin', async () => {
-      if (compiler.options.mode === 'development' && !compiler.modifiedFiles?.size) {
-        const localIPv4 = getIpv4Interfaces()[0]
-        const port = compiler.options.devServer?.port
-        const v = `http://${localIPv4}:${port}`
-        print(v)
-      }
+    compiler.hooks.afterCompile.tap('NetworkCopyPlugin', () => {
+      if (compiler.options.mode !== 'development') return
+      if (compiler.modifiedFiles?.size) return
+      const devServer = compiler.options.devServer
+      if (devServer === false) return
+      const port = devServer?.port
+      if (!port) return
+      const localIPv4 = getIpv4Interfaces()[0]
+      if (!localIPv4) return
+      void print(`http://${localIPv4}:${port}`)
     })
   }
 }
 
 export const rsbuildCliCopyPlugin = (): RsbuildPlugin => ({
   name: 'rsbuildCliCopyPlugin',
-  async setup(api) {
-    const localIPv4 = getIpv4Interfaces()[0]
+  setup(api) {
     api.onAfterStartDevServer(server => {
-      const v = `http://${localIPv4}:${server.port}`
-      print(v)
+      const localIPv4 = getIpv4Interfaces()[0]
+      if (!localIPv4) return
+      void print(`http://${localIPv4}:${server.port}`)
     })
   }
 })
 
-function print(v: string) {
+export async function copyNetworkUrl(url: string): Promise<boolean> {
   try {
-    const clipboard = new Clipboard()
-    clipboard.setText(v)
-    console.log(`\n  ${cyan('Copied to clipboard Network URL:')} ${v} \n`)
+    const { Clipboard } = await import('@napi-rs/clipboard')
+    new Clipboard().setText(url)
+    return true
   } catch (error) {
     console.error(`\n  ${red('Failed to copy to clipboard Network URL:')} ${JSON.stringify(error)} \n`)
+    return false
   }
+}
+
+async function print(url: string) {
+  const ok = await copyNetworkUrl(url)
+  console.log(`\n  ${cyan(ok ? 'Copied to clipboard Network URL:' : 'Network URL:')} ${url} \n`)
+}
+
+export function getIpv4Interfaces(): string[] {
+  const interfaces = networkInterfaces()
+  const ipv4Interfaces: Map<string, NetworkInterfaceInfo> = new Map()
+  for (const key of Object.keys(interfaces)) {
+    const list = interfaces[key]
+    if (!list) continue
+    for (const detail of list) {
+      if (detail.internal) continue
+      const familyV4Value = typeof detail.family === 'string' ? 'IPv4' : 4
+      if (detail.family === familyV4Value && !ipv4Interfaces.has(detail.address)) {
+        ipv4Interfaces.set(detail.address, detail)
+      }
+    }
+  }
+  return Array.from(ipv4Interfaces.keys())
 }
 
 function cyan(str: string) {
@@ -43,21 +68,4 @@ function cyan(str: string) {
 
 function red(str: string) {
   return `\x1b[31m${str}\x1b[0m`
-}
-
-const getIpv4Interfaces = () => {
-  const interfaces = networkInterfaces()
-  const ipv4Interfaces: Map<string, NetworkInterfaceInfo> = new Map()
-  for (const key of Object.keys(interfaces)) {
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    for (const detail of interfaces[key]!) {
-      if (detail.internal) continue
-      // 'IPv4' is in Node <= 17, from 18 it's a number 4 or 6
-      const familyV4Value = typeof detail.family === 'string' ? 'IPv4' : 4
-      if (detail.family === familyV4Value && !ipv4Interfaces.has(detail.address)) {
-        ipv4Interfaces.set(detail.address, detail)
-      }
-    }
-  }
-  return Array.from(ipv4Interfaces.keys())
 }
