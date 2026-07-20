@@ -1,6 +1,6 @@
 {
   "name": "rspack-plugin-cli-copy",
-  "version": "0.0.8",
+  "version": "1.0.0",
   "packageManager": "pnpm@11.15.1",
   "description": "Start the project and automatically copy the cli network url",
   "author": "wChenonly",
